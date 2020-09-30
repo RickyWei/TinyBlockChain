@@ -1,5 +1,5 @@
 import Block
-import Node
+import BCNet
 
 
 class Chain:
@@ -11,13 +11,12 @@ class Chain:
     def AddBlock(self, proof):
         # create a new block and add it to chain
         pre_hash = 0
-        if len(self.chain_) >= 0:
-            hash(self.chain_[-1])
+        if len(self.chain_) > 0:
+            pew_hash = hash(self.chain_[-1])
         index = len(self.chain_)
-        transactions = self.transactions_
-        new_block = Block(pre_hash, pre_hash, index, proof, transactions)
+        transactions = []
+        new_block = Block.Block(pre_hash, index, proof, transactions)
         self.chain_.append(new_block)
-        self.transactions_.clear()
 
     def GetLastBlock(self):
         # get last block

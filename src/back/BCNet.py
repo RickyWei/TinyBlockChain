@@ -11,7 +11,7 @@ class BCNet:
     def __init__(self):
         super().__init__()
         # genesis block
-        self.node_ = AddNode("", "127.0.0.1:10000", Chain())
+        self.node_ = Node.Node("0", "127.0.0.1:10000", Chain.Chain())
         self.node_.chain_.AddBlock(0)
 
     def AddNode(self, owner, ip):
@@ -23,7 +23,7 @@ class BCNet:
         else:
             raise ValueError('Invalid ip')
         chain = self.node_.chain_
-        new_node = Node(owner, ip, chain)
+        new_node = Node.Node(owner, ip, chain)
         BCNet.nodes_.add(new_node)
 
     @staticmethod
