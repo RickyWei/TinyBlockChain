@@ -2,6 +2,7 @@ import json
 
 import Block
 import BCNet
+import Node
 
 
 class Chain:
@@ -9,6 +10,9 @@ class Chain:
         # init
         super().__init__()
         self.chain_ = []
+
+    def __len__(self):
+        return len(self.chain_)
 
     def AddBlock(self, proof):
         # create a new block and add it to chain

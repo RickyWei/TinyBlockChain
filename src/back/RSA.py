@@ -1,6 +1,7 @@
 import Crypto.PublicKey.RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
+import base64
 
 
 class RSA:
@@ -12,10 +13,16 @@ class RSA:
         rsa = Crypto.PublicKey.RSA.generate(1024)
         sk = rsa.export_key()
         pk = rsa.publickey().export_key()
+        sk = base64.b64encode(sk)
+        pk = base64.b64encode(pk)
+        sk = sk.decode()
+        pk = pk.decode()
         return sk, pk
 
     @staticmethod
     def Cipher(sk, content):
+        sk = sk.encode()
+        sk = base64.b64decode(sk)
         sk = Crypto.PublicKey.RSA.importKey(sk)
         cipher = PKCS1_v1_5.new(sk)
         sha = SHA.new()
@@ -25,6 +32,8 @@ class RSA:
 
     @staticmethod
     def Decipher(pk, content, ciphered):
+        pk = pk.encode()
+        pk = base64.b64decode(pk)
         pk = Crypto.PublicKey.RSA.importKey(pk)
         decipher = PKCS1_v1_5.new(pk)
         sha = SHA.new()

@@ -2,6 +2,7 @@ import hashlib
 
 import Chain
 import BCNet
+import RSA
 
 
 class Node:
@@ -11,25 +12,28 @@ class Node:
         self.ip_ = ip
         self.chain_ = chain
 
-    def Mine(self):
-        proof = POW()
+    def Mine(self, db):
+        proof = self.POW()
         amount = 128
-        BCNet.BCNet.NewTransaction("0x0", self.owner_, amount)
+        sha = db.GetSHA("0x0")
+        sk = db.GetSK(sha)
+        sign = RSA.RSA.Cipher(sk, sha)
+        BCNet.BCNet.NewTransaction(sha, self.owner_, amount, sign, db)
         self.chain_.AddBlock(proof)
-        self.chain_.GetLastBlock().transactions_ = BCNet.transactions_
+        self.chain_.GetLastBlock().transactions_ = BCNet.BCNet.transactions_
         BCNet.BCNet.transactions_.clear()
         BCNet.BCNet.Consistent()
 
     def POW(self):
         last_block = self.chain_.GetLastBlock()
-        last_proof = last_block.proof
+        last_proof = last_block.proof_
         proof = 0
         while Node.ValidProof(last_proof, proof) == False:
             proof += 1
         return proof
 
     @staticmethod
-    def ValidProof(self, last_proof, proof):
+    def ValidProof(last_proof, proof):
         difficulty = 4
         proof = f'{last_proof}{proof}'.encode()
         hashval = hashlib.sha256(proof).hexdigest()

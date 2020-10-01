@@ -26,12 +26,12 @@ class DB:
         else:
             return False
 
-    def AddUser(self, user, passwd, sha):
+    def AddUser(self, user, passwd, sha, sk, pk):
         if self.HasUser(user) == True:
             return False
         else:
-            sql = "INSERT INTO user(user,passwd,sha)VALUES('{}','{}','{}')".format(
-                user, passwd, sha)
+            sql = "INSERT INTO user(user,passwd,sha,sk,pk)VALUES('{}','{}','{}','{}','{}')".format(
+                user, passwd, sha, sk, pk)
             try:
                 self.cursor_.execute(sql)
                 self.db_.commit()
@@ -73,12 +73,21 @@ class DB:
         except:
             self.db_.rollback()
 
+    def GetSHA(self, user):
+        sql = "SELECT sha from user WHERE user='{}'".format(user)
+        self.cursor_.execute(sql)
+        res = self.cursor_.fetchone()
+        if res != None:
+            return res[0]
+        else:
+            return None
+
     def GetSK(self, sha):
         sql = "SELECT sk from user WHERE sha='{}'".format(sha)
         self.cursor_.execute(sql)
         res = self.cursor_.fetchone()
-        if res != None
-        return res[0]
+        if res != None:
+            return res[0]
         else:
             return None
 
@@ -86,7 +95,17 @@ class DB:
         sql = "SELECT pk from user WHERE sha='{}'".format(sha)
         self.cursor_.execute(sql)
         res = self.cursor_.fetchone()
-        if res != None
-        return res[0]
+        if res != None:
+            return res[0]
         else:
             return None
+
+
+if __name__ == '__main__':
+    db = DB()
+    sha = db.GetSHA("0x0")
+    print(sha)
+    sk = db.GetSK(sha)
+    print(sk)
+    pk = db.GetPK(sha)
+    print(pk)

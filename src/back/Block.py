@@ -12,6 +12,7 @@ class Block:
         self.timestamp_ = time.time()
         self.proof_ = proof
         self.transactions_ = transactions
+        self.hash_ = ""
 
     @staticmethod
     def Hash(block):
@@ -22,4 +23,11 @@ class Block:
 
 
 if __name__ == '__main__':
-    pass
+    blk = Block("pre_hash", "index", "proof", "transactions")
+    print(blk.pre_hash_)
+    print(blk.index_)
+    print(blk.timestamp_)
+    print(blk.proof_)
+    print(blk.transactions_)
+    blk.hash_ = Block.Hash(blk)
+    print(blk.hash_)

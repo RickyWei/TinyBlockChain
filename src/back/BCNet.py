@@ -3,12 +3,13 @@ from uuid import uuid4
 
 import Chain
 import Node
+import RSA
 
 
 class BCNet:
     nodes_ = {}
     transactions_ = []
-    fee_rate_ = 0.01
+    tax_ = 0.01
 
     def __init__(self):
         super().__init__()
@@ -40,43 +41,55 @@ class BCNet:
             chain = BCNet.nodes_[self.uid_].chain_.GetChain()
             return chain
 
-    def Mine(self, uid):
+    def Mine(self, uid, db):
         node = BCNet.nodes_[uid]
-        node.Mine()
+        node.Mine(db)
 
     @staticmethod
-    def NewTransaction(sender, receiver, amount):
+    def NewTransaction(sender, receiver, amount, sign, db):
         # add a nre transaction to list of transactions
         transaction = {
             'sender': sender,
-            'reveiver': receiver,
+            'receiver': receiver,
             'amount': amount,
+            'sign': sign
         }
-        if CheckDB == True:
+        if BCNet.VerifyTransaction(transaction, db) == True:
             BCNet.transactions_.append(transaction)
             return True
         else:
             return False
 
     @staticmethod
-    def CheckDB(db, transaction):
+    def VerifyTransaction(transaction, db):
+        # check balance
+        enough_balance = False
         balance = db.CheckBalance(transaction['sender'])
-        if balance > transaction['amount']*BCNet.fee_rate_:
-            return True
-        else:
-            return False
+        enough_balance = balance > transaction['amount']*BCNet.tax_
+        # check sign
+        valid_sign = False
+        pk = db.GetPK(transaction['sender'])
+        valid_sign = RSA.RSA.Decipher(
+            pk, transaction['sender'], transaction['sign'])
+        if enough_balance and valid_sign:
+            BCNet.UpdateDB(db, transaction)
+            BCNet.transactions_.append(transaction)
 
     @staticmethod
-    def UpdateDB(db):
-        pass
+    def UpdateDB(db, transaction):
+        sender = transaction['sender']
+        receiver = transaction['receiver']
+        amount = transaction['amount']
+        db.UpdateBalance(sender, amount*(1+BCNet.tax_))
+        db.UpdateBalance(receiver, amount)
 
     @staticmethod
-    def Coinsistent(bcnet):
+    def Consistent():
         main_chain = []
-        for nd in bcnet.nodes_:
+        for nd in BCNet.nodes_.values():
             if len(nd.chain_) > len(main_chain):
                 main_chain = nd.chain_
-        for nd in bcnet.nodes_:
+        for nd in BCNet.nodes_.values():
             nd.chain_ = main_chain
 
 

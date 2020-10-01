@@ -3,6 +3,7 @@ import hashlib
 
 import BCNet
 import DB
+import RSA
 
 app = Flask(__name__)
 
@@ -19,9 +20,19 @@ def RegisterUser():
         return "User has existed", 400
     else:
         sha = hashlib.sha256((user+passwd).encode()).hexdigest()
-        db.AddUser(user, passwd, sha)
-        rsps = {"sha": sha}
-        return jsonify(rsps), 200
+        sk, pk = RSA.RSA.GenerateSKPK()
+        if db.AddUser(user, passwd, sha, sk, pk) == True:
+            rsps = {"sha": sha,
+                    "sk": sk,
+                    "pk": pk,
+                    }
+            return jsonify(rsps), 200
+        else:
+            rsps = {"sha": sha,
+                    "sk": sk,
+                    "pk": pk,
+                    }
+            return jsonify(rsps), 500
 
 
 @app.route('/login', methods=['POST'])
@@ -50,14 +61,15 @@ def CheckBalance():
             return "error sha", 400
 
 
-@app.route('NewTransaction', method=['POST'])
+@app.route('/NewTransaction', methods=['POST'])
 def NewTransaction():
     info = request.get_json()
     sender = info.get('sender')
     receiver = info.get('receiver')
     amount = info.get('amount')
     if db.HasUserSha(sender) and db.HasUserSha(receiver):
-        if bcnet.NewTransaction(sender, receiver, amount):
+        sign = RSA.RSA.Cipher(sender)
+        if bcnet.NewTransaction(sender, receiver, amount, sign):
             return info, 200
         else:
             return "wrong signature", 400
@@ -78,12 +90,12 @@ def RegisterNode():
         return "error info", 400
 
 
-@app.route('mine', methods=['POST'])
+@app.route('/mine', methods=['POST'])
 def Mine():
     info = request.get_json()
     uid = info.get('uid')
     if uid != None:
-        bcnet.Mine()
+        bcnet.Mine(uid, db)
     else:
         return "error uid", 400
 
