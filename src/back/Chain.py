@@ -18,15 +18,16 @@ class Chain:
         # create a new block and add it to chain
         pre_hash = 0
         if len(self.chain_) > 0:
-            pew_hash = hash(self.chain_[-1])
+            pre_hash = Block.Block.Hash(self.chain_[-1])
         index = len(self.chain_)
         transactions = []
         new_block = Block.Block(pre_hash, index, proof, transactions)
+        # new_block.hash_ = Block.Block.Hash(new_block)
         self.chain_.append(new_block)
 
     def GetChain(self):
         chain = json.dumps(
-            obj=self.chain_, default=lambda x: x.__dict__, sort_keys=False)
+            obj=self.chain_, default=lambda x: x.__dict__, sort_keys=False).encode()
         return chain
 
     def GetLastBlock(self):

@@ -27,6 +27,8 @@ class BCNet:
             ip = ip.path
         else:
             raise ValueError('Invalid ip')
+        if ip in BCNet.nodes_.keys():
+            return None
         chain = self.node_.chain_
         new_node = Node.Node(owner, ip, chain)
         uid = uuid4()
@@ -55,6 +57,7 @@ class BCNet:
             'sign': sign
         }
         if BCNet.VerifyTransaction(transaction, db) == True:
+            BCNet.UpdateDB(db, transaction)
             BCNet.transactions_.append(transaction)
             return True
         else:
@@ -72,15 +75,20 @@ class BCNet:
         valid_sign = RSA.RSA.Decipher(
             pk, transaction['sender'], transaction['sign'])
         if enough_balance and valid_sign:
-            BCNet.UpdateDB(db, transaction)
-            BCNet.transactions_.append(transaction)
+            return True
+        else:
+            return False
+        # print(transaction)
+        # print(enough_balance)
+        # print(valid_sign)
+        # print(BCNet.transactions_)
 
     @staticmethod
     def UpdateDB(db, transaction):
         sender = transaction['sender']
         receiver = transaction['receiver']
         amount = transaction['amount']
-        db.UpdateBalance(sender, amount*(1+BCNet.tax_))
+        db.UpdateBalance(sender, -amount*(1+BCNet.tax_))
         db.UpdateBalance(receiver, amount)
 
     @staticmethod

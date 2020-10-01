@@ -28,6 +28,7 @@ class RSA:
         sha = SHA.new()
         sha.update(content.encode())
         ciphered = cipher.sign(sha)
+        ciphered = base64.b64encode(ciphered).decode()
         return ciphered
 
     @staticmethod
@@ -38,6 +39,7 @@ class RSA:
         decipher = PKCS1_v1_5.new(pk)
         sha = SHA.new()
         sha.update(content.encode())
+        ciphered = base64.b64decode(ciphered.encode())
         isverify = decipher.verify(sha, ciphered)
         return isverify
 

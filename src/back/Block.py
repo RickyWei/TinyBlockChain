@@ -12,13 +12,14 @@ class Block:
         self.timestamp_ = time.time()
         self.proof_ = proof
         self.transactions_ = transactions
-        self.hash_ = ""
+        # self.hash_ = ""
 
     @staticmethod
     def Hash(block):
         # hash a block
-        block = json.dumps(block, sort_keys=True).encode()
-        hashval = hashlib.sha256(block).hexdigest
+        block = json.dumps(block, default=lambda o: o.__dict__,
+                           sort_keys=True).encode()
+        hashval = hashlib.sha256(block).hexdigest()
         return hashval
 
 
@@ -29,5 +30,5 @@ if __name__ == '__main__':
     print(blk.timestamp_)
     print(blk.proof_)
     print(blk.transactions_)
-    blk.hash_ = Block.Hash(blk)
-    print(blk.hash_)
+
+    print(Block.Hash(blk))

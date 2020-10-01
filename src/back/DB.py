@@ -69,7 +69,7 @@ class DB:
             new_balance, sha)
         try:
             self.cursor_.execute(sql)
-            self.db_.commit
+            self.db_.commit()
         except:
             self.db_.rollback()
 

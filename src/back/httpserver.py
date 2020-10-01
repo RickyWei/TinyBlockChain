@@ -84,8 +84,11 @@ def RegisterNode():
     ip = info.get('ip')
     if owner and ip:
         uid = bcnet.AddNode(owner, ip)
-        rsps = {"uid": uid}
-        return jsonify(rsps), 200
+        if uid != None:
+            rsps = {"uid": uid}
+            return jsonify(rsps), 200
+        else:
+            return "Node has been registered", 400
     else:
         return "error info", 400
 
@@ -96,6 +99,7 @@ def Mine():
     uid = info.get('uid')
     if uid != None:
         bcnet.Mine(uid, db)
+        return "mine successfully", 200
     else:
         return "error uid", 400
 

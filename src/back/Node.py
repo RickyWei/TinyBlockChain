@@ -20,7 +20,7 @@ class Node:
         sign = RSA.RSA.Cipher(sk, sha)
         BCNet.BCNet.NewTransaction(sha, self.owner_, amount, sign, db)
         self.chain_.AddBlock(proof)
-        self.chain_.GetLastBlock().transactions_ = BCNet.BCNet.transactions_
+        self.chain_.GetLastBlock().transactions_ = BCNet.BCNet.transactions_.copy()
         BCNet.BCNet.transactions_.clear()
         BCNet.BCNet.Consistent()
 
