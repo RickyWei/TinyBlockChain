@@ -1,18 +1,22 @@
 from urllib.parse import urlparse
+from uuid import uuid4
 
 import Chain
 import Node
 
 
 class BCNet:
-    nodes_ = set()
+    nodes_ = {}
     transactions_ = []
+    fee_rate_ = 0.01
 
     def __init__(self):
         super().__init__()
         # genesis block
         self.node_ = Node.Node("0", "127.0.0.1:10000", Chain.Chain())
         self.node_.chain_.AddBlock(0)
+        self.uid_ = str(uuid4())
+        BCNet.nodes_[self.uid_] = self.node_
 
     def AddNode(self, owner, ip):
         ip = urlparse(ip)
@@ -24,7 +28,21 @@ class BCNet:
             raise ValueError('Invalid ip')
         chain = self.node_.chain_
         new_node = Node.Node(owner, ip, chain)
-        BCNet.nodes_.add(new_node)
+        uid = uuid4()
+        uid = str(uid)
+        BCNet.nodes_[uid] = new_node
+        return uid
+
+    def GetChain(self):
+        if len(BCNet.nodes_) < 0:
+            return {}
+        else:
+            chain = BCNet.nodes_[self.uid_].chain_.GetChain()
+            return chain
+
+    def Mine(self, uid):
+        node = BCNet.nodes_[uid]
+        node.Mine()
 
     @staticmethod
     def NewTransaction(sender, receiver, amount):
@@ -34,7 +52,23 @@ class BCNet:
             'reveiver': receiver,
             'amount': amount,
         }
-        BCNet.transactions_.append(transaction)
+        if CheckDB == True:
+            BCNet.transactions_.append(transaction)
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def CheckDB(db, transaction):
+        balance = db.CheckBalance(transaction['sender'])
+        if balance > transaction['amount']*BCNet.fee_rate_:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def UpdateDB(db):
+        pass
 
     @staticmethod
     def Coinsistent(bcnet):

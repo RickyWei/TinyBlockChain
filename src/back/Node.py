@@ -14,7 +14,7 @@ class Node:
     def Mine(self):
         proof = POW()
         amount = 128
-        BCNet.BCNet.NewTransaction("0x00", self.owner_, amount)
+        BCNet.BCNet.NewTransaction("0x0", self.owner_, amount)
         self.chain_.AddBlock(proof)
         self.chain_.GetLastBlock().transactions_ = BCNet.transactions_
         BCNet.BCNet.transactions_.clear()

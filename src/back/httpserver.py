@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 import hashlib
 
 import BCNet
@@ -18,8 +18,10 @@ def RegisterUser():
     if db.HasUser(user) == True:
         return "User has existed", 400
     else:
-        db.AddUser(user, passwd, hashlib.sha256(user+passwd))
-        return "Register successfully", 200
+        sha = hashlib.sha256((user+passwd).encode()).hexdigest()
+        db.AddUser(user, passwd, sha)
+        rsps = {"sha": sha}
+        return jsonify(rsps), 200
 
 
 @app.route('/login', methods=['POST'])
@@ -27,22 +29,69 @@ def Login():
     info = request.get_json()
     user = info.get('user')
     passwd = info.get('passwd')
-    if db.Login() == True:
-        return "Login successfully", 200
+    sha = db.Login(user, passwd)
+    if sha != None:
+        rsps = {"sha": sha}
+        return jsonify(rsps), 200
     else:
         return "Wrong username or password", 400
+
+
+@app.route('/checkbalance', methods=['POST'])
+def CheckBalance():
+    info = request.get_json()
+    sha = info.get("sha")
+    if sha != None:
+        balance = db.CheckBalance(sha)
+        if balance != None:
+            rsps = {"balance": balance}
+            return jsonify(rsps), 200
+        else:
+            return "error sha", 400
+
+
+@app.route('NewTransaction', method=['POST'])
+def NewTransaction():
+    info = request.get_json()
+    sender = info.get('sender')
+    receiver = info.get('receiver')
+    amount = info.get('amount')
+    if db.HasUserSha(sender) and db.HasUserSha(receiver):
+        if bcnet.NewTransaction(sender, receiver, amount):
+            return info, 200
+        else:
+            return "wrong signature", 400
+    else:
+        return "no sender or receiver", 400
 
 
 @app.route('/register/node', methods=['POST'])
 def RegisterNode():
     info = request.get_json()
-    owner = info.get('owner')
-    ip = info.get('owner')
+    owner = info.get('sha')
+    ip = info.get('ip')
     if owner and ip:
-        bcnet.AddNode(owner, ip)
+        uid = bcnet.AddNode(owner, ip)
+        rsps = {"uid": uid}
+        return jsonify(rsps), 200
     else:
         return "error info", 400
 
 
+@app.route('mine', methods=['POST'])
+def Mine():
+    info = request.get_json()
+    uid = info.get('uid')
+    if uid != None:
+        bcnet.Mine()
+    else:
+        return "error uid", 400
+
+
+@app.route('/getchain', methods=['GET', 'POST'])
+def GetChain():
+    return bcnet.GetChain()
+
+
 if __name__ == '__main__':
-    app.run(host="localhost", port=9999)
+    app.run(host="192.168.56.101", port=9999)

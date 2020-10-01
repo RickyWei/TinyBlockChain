@@ -1,3 +1,5 @@
+import json
+
 import Block
 import BCNet
 
@@ -17,6 +19,11 @@ class Chain:
         transactions = []
         new_block = Block.Block(pre_hash, index, proof, transactions)
         self.chain_.append(new_block)
+
+    def GetChain(self):
+        chain = json.dumps(
+            obj=self.chain_, default=lambda x: x.__dict__, sort_keys=False)
+        return chain
 
     def GetLastBlock(self):
         # get last block
@@ -38,7 +45,7 @@ class Chain:
                 return False
 
             # check pow
-            if not Node.ValidProof(last_block.proof, cur_block.proof):
+            if not Node.Node.ValidProof(last_block.proof, cur_block.proof):
                 return False
 
             last_block = cur_block
