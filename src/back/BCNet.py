@@ -90,6 +90,8 @@ class BCNet:
         amount = transaction['amount']
         db.UpdateBalance(sender, -amount*(1+BCNet.tax_))
         db.UpdateBalance(receiver, amount)
+        # record transaction
+        db.InsertTransaction(sender, receiver, amount)
 
     @staticmethod
     def Consistent():

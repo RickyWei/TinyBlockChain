@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import hashlib
 
 import BCNet
@@ -6,6 +7,7 @@ import DB
 import RSA
 
 app = Flask(__name__)
+CORS(app)
 
 bcnet = BCNet.BCNet()
 db = DB.DB()
@@ -16,11 +18,13 @@ def RegisterUser():
     info = request.get_json()
     user = info.get('user')
     passwd = info.get('passwd')
+    print(user, passwd)
     if db.HasUser(user) == True:
         return "User has existed", 400
     else:
         sha = hashlib.sha256((user+passwd).encode()).hexdigest()
         sk, pk = RSA.RSA.GenerateSKPK()
+
         if db.AddUser(user, passwd, sha, sk, pk) == True:
             rsps = {"sha": sha,
                     "sk": sk,
@@ -40,6 +44,7 @@ def Login():
     info = request.get_json()
     user = info.get('user')
     passwd = info.get('passwd')
+    # print(user, passwd)
     sha = db.Login(user, passwd)
     if sha != None:
         rsps = {"sha": sha}
@@ -61,20 +66,27 @@ def CheckBalance():
             return "error sha", 400
 
 
-@app.route('/NewTransaction', methods=['POST'])
+@app.route('/transaction', methods=['POST'])
 def NewTransaction():
     info = request.get_json()
     sender = info.get('sender')
     receiver = info.get('receiver')
-    amount = info.get('amount')
+    amount = float(info.get('amount'))
+    print(sender, "\n", receiver)
     if db.HasUserSha(sender) and db.HasUserSha(receiver):
-        sign = RSA.RSA.Cipher(sender)
-        if bcnet.NewTransaction(sender, receiver, amount, sign):
+        sk = db.GetSK(sender)
+        sign = RSA.RSA.Cipher(sk, sender)
+        if bcnet.NewTransaction(sender, receiver, amount, sign, db):
             return info, 200
         else:
             return "wrong signature", 400
     else:
         return "no sender or receiver", 400
+
+
+@app.route('/alltransaction', methods=['GET'])
+def GetAllTransaction():
+    return jsonify(db.GetAllTransaction()), 200
 
 
 @app.route('/register/node', methods=['POST'])
@@ -106,7 +118,7 @@ def Mine():
 
 @app.route('/getchain', methods=['GET', 'POST'])
 def GetChain():
-    return bcnet.GetChain()
+    return bcnet.GetChain(), 200
 
 
 if __name__ == '__main__':

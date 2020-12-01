@@ -21,7 +21,7 @@ class DB:
         sql = "SELECT * FROM user WHERE sha='{}'".format(sha)
         self.cursor_.execute(sql)
         res = self.cursor_.fetchall()
-        if len(res) > 1:
+        if len(res) >= 1:
             return True
         else:
             return False
@@ -59,6 +59,32 @@ class DB:
         res = self.cursor_.fetchone()
         if res != None:
             return res[0]
+        else:
+            return None
+
+    def InsertTransaction(self, sender, receiver, amount):
+        sql = "INSERT INTO transaction(sender,receiver,amount)VALUES('{}','{}','{}')".format(
+            sender, receiver, amount)
+        print(sql)
+        try:
+            self.cursor_.execute(sql)
+            self.db_.commit()
+            return True
+        except:
+            self.db_.rollback()
+            return False
+
+    def GetAllTransaction(self):
+        sql = "SELECT * from transaction"
+        self.cursor_.execute(sql)
+        res = self.cursor_.fetchall()
+        # print(res)
+        d = []
+        for item in res:
+            d.append(
+                {"sender": item[0], "receiver": item[1], "amount": item[2]})
+        if res != None:
+            return d
         else:
             return None
 
