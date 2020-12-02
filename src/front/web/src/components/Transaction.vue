@@ -1,11 +1,9 @@
 <template>
   <div>
     <Navbar></Navbar>
-    <Row>
-      <Col span="8"><div></div></Col>
-      <Col span="8">
-        <div>
-          <Form ref="formInline" :model="formInline" :rules="ruleInline">
+    
+        <div style="margin:10px">
+          <Form ref="formInline" :model="formInline" :rules="ruleInline" style="width:60%;margin:auto">
             <FormItem prop="receiver">
               <Input
                 type="text"
@@ -31,9 +29,7 @@
             </FormItem>
           </Form>
         </div>
-      </Col>
-      <Col span="8"><div></div></Col>
-    </Row>
+     
   </div>
 </template>
 <script>

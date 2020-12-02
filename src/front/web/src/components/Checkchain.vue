@@ -1,7 +1,7 @@
 <template>
   <div>
     <Navbar></Navbar>
-    <Button @click="getchain"
+    <Button @click="getchain" style="margin:10px"
       ><Icon type="ios-refresh" />Click to refresh to get chain</Button
     >
     <template>

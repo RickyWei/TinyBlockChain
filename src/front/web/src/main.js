@@ -6,10 +6,12 @@ import ViewUI from 'view-design'
 import 'view-design/dist/styles/iview.css';
 import axios from 'axios'
 import store from './store'
+// import ElementUI from 'element-ui'
+// import '@/icons'
 
 Vue.use(VueRouter)
 Vue.use(ViewUI);
-
+// Vue.use(ElementUI)
 Vue.prototype.axios = axios;
 
 Vue.config.productionTip = false

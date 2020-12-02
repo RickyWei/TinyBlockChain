@@ -5,12 +5,21 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
   },
   "dependencies": {
     "axios": "^0.21.0",
     "core-js": "^3.8.0",
+    "element-ui": "^2.14.1",
+    "less-loader": "^7.1.0",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^10.1.0",
+    "svg-icon": "^0.8.2",
+    "three": "^0.106.1",
+    "view-design": "^4.4.0",
     "vue": "^2.6.12",
+    "vue-router": "^3.4.9",
     "vuex": "^3.6.0"
   },
   "devDependencies": {
@@ -20,6 +29,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.2.2",
+    "svg-sprite-loader": "^5.0.0",
     "vue-template-compiler": "^2.6.12"
   }
 }

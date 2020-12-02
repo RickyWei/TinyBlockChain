@@ -1,19 +1,26 @@
-<template>
-  <div>
+<template >
+  <div >
     <Navbar></Navbar>
-    <Button @click="registernode"
-      ><Icon type="ios-refresh" />register as a node</Button
-    >
-    <Circle
-      :percent="[iscomplete ? 100 : 30]"
-      stroke-color="[iscomplete?#5cb85c:#5cb85c]"
-    >
-      <Icon
-        type="[iscomplete?ios-hammer-outline:ios-cog-outline]"
-        size="60"
-      ></Icon>
-    </Circle>
-    <Button @click="mine"><Icon type="ios-construct-outline" />mine</Button>
+    <div >
+    <div style="margin: 10px">
+      <Button @click="registernode" style="margin: 10px"
+        ><Icon type="ios-refresh" />register as a node</Button
+      >
+
+      <Button @click="mine"><Icon type="ios-construct-outline" />mine</Button>
+    </div>
+    <div>
+      <i-circle
+        :percent="iscomplete ? 100 : 30"
+        :stroke-color="iscomplete ? '#5cb85c' : '#ff5500'"
+      >
+        <Icon
+          :type="iscomplete ? 'ios-hammer-outline' : 'ios-cog-outline'"
+          size="60"
+        ></Icon>
+      </i-circle>
+    </div>
+    </div>
   </div>
 </template>
 
@@ -27,6 +34,13 @@ export default {
   data() {
     return {
       iscomplete: true,
+      note: {
+        backgroundImage:
+          "url(" + require("../assets/img/background.png") + ") ",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      },
     };
   },
   methods: {

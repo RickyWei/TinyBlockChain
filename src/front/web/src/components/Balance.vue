@@ -1,13 +1,15 @@
 <template>
   <div>
     <Navbar></Navbar>
+    <div style="margin:10px">
     <Poptip title="Balance" v-bind:content="content">
-      <Button @click="getbalance"><Icon type="logo-usd" />Click</Button>
+      <Button @click="getbalance" style="margin:5px"><Icon type="logo-usd" />Click</Button>
     </Poptip>
     <Button @click="getalltransaction"
       ><Icon type="logo-usd" />get all transaction</Button
     >
-    <Table border :columns="columns5" :data="data5"></Table>
+    </div>
+    <Table border :columns="columns5" :data="data5" style="margin:5px"></Table>
   </div>
 </template>
 

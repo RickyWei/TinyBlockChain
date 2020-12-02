@@ -1,39 +1,38 @@
 <template>
   <div>
-    <Row>
-      <Col span="8"><div></div></Col>
-      <Col span="8">
-        <div>
-          <Form ref="formInline" :model="formInline" :rules="ruleInline">
-            <FormItem prop="user">
-              <Input
-                type="text"
-                v-model="formInline.user"
-                placeholder="Username"
-              >
-                <Icon type="ios-person-outline" slot="prepend"></Icon>
-              </Input>
-            </FormItem>
-            <FormItem prop="password">
-              <Input
-                type="password"
-                v-model="formInline.password"
-                placeholder="Password"
-              >
-                <Icon type="ios-lock-outline" slot="prepend"></Icon>
-              </Input>
-            </FormItem>
-            <FormItem>
-              <Button type="success" @click="handleSubmit"> Signin </Button>
-              <Button type="primary" @click="handleRegister"> Register </Button>
-            </FormItem>
-          </Form>
-        </div>
-      </Col>
-      <Col span="8"><div></div></Col>
-    </Row>
+    
+    <Form
+      ref="formInline"
+      :model="formInline"
+      :rules="ruleInline"
+      style="width: 30%; margin: 150px auto"
+    >
+      <FormItem prop="user">
+        <Input type="text" v-model="formInline.user" placeholder="Username">
+          <Icon type="ios-person-outline" slot="prepend"></Icon>
+        </Input>
+      </FormItem>
+      <FormItem prop="password">
+        <Input
+          type="password"
+          v-model="formInline.password"
+          placeholder="Password"
+        >
+          <Icon type="ios-lock-outline" slot="prepend"></Icon>
+        </Input>
+      </FormItem>
+      <FormItem>
+        <Button type="success" @click="handleSubmit" style="margin: 5px">
+          Signin
+        </Button>
+        <Button type="primary" @click="handleRegister" style="margin: 5px">
+          Register
+        </Button>
+      </FormItem>
+    </Form>
   </div>
 </template>
+
 <script>
 export default {
   name: "Login",
@@ -100,6 +99,6 @@ export default {
     handleRegister() {
       this.$router.push({ path: "/Register" });
     },
-  },
+  }
 };
 </script>
